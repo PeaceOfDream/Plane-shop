@@ -9,6 +9,14 @@ export const getPlane = createAsyncThunk('GET_PLANE', async (id, thunkAPI) => {
   }
 });
 
+export const createPlane = createAsyncThunk('CREATE_PLANE', async (planeData, thunkAPI) => {
+  try {
+    return await planesService.createPlane(planeData);
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data);
+  }
+});
+
 const planeSlice = createSlice({
   name: 'plane',
   initialState: {
@@ -16,6 +24,12 @@ const planeSlice = createSlice({
     isError: false,
     isLoading: false,
     message: '',
+	 errors: null
+  },
+  reducers: {
+	resetPlaneErrors: (state) => {
+		state.errors = null
+	}
   },
   extraReducers: (builder) => {
     builder.addCase(getPlane.pending, (state) => {
@@ -31,7 +45,21 @@ const planeSlice = createSlice({
       state.message = action.payload.message;
       state.planes = null;
     });
+	 builder.addCase(createPlane.pending, (state) => {
+     state.isLoading = true;
+	  state.errors = null
+   });
+   builder.addCase(createPlane.fulfilled, (state, action) => {
+     state.isLoading = false;
+	  state.errors = null;
+   });
+   builder.addCase(createPlane.rejected, (state, action) => {
+     state.isLoading = false;
+     state.isError = true;
+     state.errors = action.payload
+   });
   },
 });
 
 export default planeSlice.reducer;
+export const {resetPlaneErrors} = planeSlice.actions
