@@ -9,8 +9,16 @@ const getPlanes = async () => {
   return planes.data
 }
 
+const getPlane = async (id) => {
+  // -> GET http://localhost:8000/api/plane/
+  const plane = await axios.get(`/api/planes/${id}`);
+
+  return plane.data;
+};
+
 const planesService = {
-	getPlanes
-}
+  getPlanes,
+  getPlane,
+};
 
 export default planesService
